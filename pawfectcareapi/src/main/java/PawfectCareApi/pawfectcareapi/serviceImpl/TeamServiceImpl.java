@@ -25,7 +25,7 @@ public class TeamServiceImpl implements TeamService {
 
         try {
             team = uRepo.findAllExceptId(user_id);
-            if (team.isEmpty()) {
+            if (team.size() == 0) {
                 resp.setMessage("No Data to Show");
                 resp.setStatus(false);
                 resp.setStatusCode(404);

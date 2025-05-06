@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository uRepo;
 
-    @Autowired
-    PushNotificationService pushNotificationService;
+//    @Autowired
+//    PushNotificationService pushNotificationService;
 
     BaseController baseController = new BaseController();
     public final String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz0123456789";
@@ -112,12 +112,8 @@ public class UserServiceImpl implements UserService {
                 u.setActive(true);
                 u.setCreatedAt(Timestamp.valueOf(date));
                 u.setOtpCode(Integer.parseInt(code));
+                u.setRoleId(2);
 
-                if (role.equals("Admin")) {
-                    u.setRoleId(1);
-                } else {
-                    u.setRoleId(2);
-                }
                 uRepo.save(u);
 
                 message = "Your account has been created successfully.";
@@ -190,8 +186,8 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
-    public void getNotification(PushNotificationRequest request) {
-        pushNotificationService.sendPushNotificationToToken(request);
-        System.out.println("princr");
-    }
+//    public void getNotification(PushNotificationRequest request) {
+//        pushNotificationService.sendPushNotificationToToken(request);
+//        System.out.println("princr");
+//    }
 }
