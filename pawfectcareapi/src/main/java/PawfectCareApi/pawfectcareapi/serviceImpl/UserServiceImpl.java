@@ -13,6 +13,7 @@ import PawfectCareApi.pawfectcareapi.controller.BaseController;
 import PawfectCareApi.pawfectcareapi.error.ErrorException;
 import PawfectCareApi.pawfectcareapi.model.ApiResponseModel;
 import PawfectCareApi.pawfectcareapi.model.EmployeeModel;
+import com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository uRepo;
 
-    @Autowired
-    PushNotificationService pushNotificationService;
+//    @Autowired
+//    PushNotificationService pushNotificationService;
 
     BaseController baseController = new BaseController();
     public final String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz0123456789";
@@ -60,32 +61,62 @@ public class UserServiceImpl implements UserService {
                 resp.setStatus(false);
             } else {
 
-                checkIfActive = uRepo.findByEmailAndIsActive(username, isActive);
-                if (checkIfActive != null) {
-                    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                    if (passwordEncoder.matches(password, u.getPassword())) {
-                        u.setDeviceToken(token);
-                        uRepo.save(u);
-                        resp.setData(u);
-                        resp.setMessage("Login Success!");
-                        resp.setStatusCode(200);
-                        resp.setStatus(true);
+                if (u.isVerified()) {
+                    checkIfActive = uRepo.findByEmailAndIsActive(username, isActive);
+                    if (checkIfActive != null) {
+                        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                        if (passwordEncoder.matches(password, u.getPassword())) {
+                            u.setNotificationToken(token);
+                            uRepo.save(u);
+                            resp.setData(u);
+                            resp.setMessage("Login Success!");
+                            resp.setStatusCode(200);
+                            resp.setStatus(true);
+                        } else {
+                            resp.setMessage("Wrong password");
+                            resp.setStatusCode(404);
+                            resp.setStatus(false);
+                        }
                     } else {
-                        resp.setMessage("Wrong password");
+                        resp.setMessage("This Account is no longer Active.");
                         resp.setStatusCode(404);
                         resp.setStatus(false);
                     }
-                } else {
-                    resp.setMessage("This Account is no longer Active.");
+                }else{
+                    resp.setMessage("This Account is not yet verified.");
                     resp.setStatusCode(404);
                     resp.setStatus(false);
                 }
+
 
             }
         } catch (ErrorException e) {
             e.printStackTrace();
         }
         return resp;
+    }
+
+    @Override
+    public ApiResponseModel hideCondition(int user_id) {
+
+        UserEntity u = new UserEntity();
+        ApiResponseModel resp = new ApiResponseModel();
+
+        try {
+            u = uRepo.findById(user_id);
+            u.setReadTc(true);
+            uRepo.save(u);
+
+            resp.setStatus(true);
+            resp.setStatusCode(200);
+
+        } catch (Exception ex) {
+            resp.setMessage(ex.getMessage());
+            resp.setStatus(false);
+            resp.setStatusCode(404);
+        }
+        return resp;
+
     }
 
     @Override
@@ -112,17 +143,15 @@ public class UserServiceImpl implements UserService {
                 u.setActive(true);
                 u.setCreatedAt(Timestamp.valueOf(date));
                 u.setOtpCode(Integer.parseInt(code));
+                u.setReadTc(false);
+                u.setRoleId(2);
 
-                if (role.equals("Admin")) {
-                    u.setRoleId(1);
-                } else {
-                    u.setRoleId(2);
-                }
                 uRepo.save(u);
 
                 message = "Your account has been created successfully.";
                 resp.setMessage(message);
                 resp.setStatus(true);
+                resp.setStatusCode(200);
                 data.put("%%CODE%%", code);
                 data.put("%%email%%", u.getEmail());
 
@@ -134,6 +163,66 @@ public class UserServiceImpl implements UserService {
                 resp.setStatus(false);
                 resp.setStatusCode(404);
 
+            }
+
+        } catch (Exception ex) {
+            message = ex.getMessage();
+            resp.setMessage(message);
+            resp.setStatus(false);
+            resp.setStatusCode(404);
+
+        }
+        return resp;
+    }
+
+    @Override
+    public ApiResponseModel resendCode(String email){
+        String message = "";
+        String code = "";
+        UserEntity u = new UserEntity();
+        ApiResponseModel resp = new ApiResponseModel();
+        HashMap<String, Object> data = new HashMap<>();
+
+        try {
+            u = uRepo.findByEmail(email);
+            if (u != null) {
+                code = getRandomNumber(4);
+                u.setOtpCode(Integer.parseInt(code));
+                uRepo.save(u);
+
+                message = "We'll send a 6 digit number on your email.\n Please check it to verify.";
+                resp.setMessage(message);
+                resp.setStatus(true);
+                resp.setStatusCode(200);
+                data.put("%%CODE%%", code);
+                data.put("%%email%%", u.getEmail());
+
+                baseController.formatAndSendMail(u.getEmail(), "User Verification", "VerifyUser.html", data, u.getFullname());
+
+            }
+
+        } catch (Exception ex) {
+            message = ex.getMessage();
+            resp.setMessage(message);
+            resp.setStatus(false);
+            resp.setStatusCode(404);
+
+        }
+        return resp;
+    }
+
+    @Override
+    public ApiResponseModel deleteRegistration(String email){
+        String message = "";
+        UserEntity u = new UserEntity();
+        ApiResponseModel resp = new ApiResponseModel();
+
+        try {
+            u = uRepo.findByEmail(email);
+            if (u != null) {
+                uRepo.delete(u);
+                resp.setStatus(true);
+                resp.setStatusCode(200);
             }
 
         } catch (Exception ex) {
@@ -161,11 +250,11 @@ public class UserServiceImpl implements UserService {
 
                 if (uRepo.existsByOtpCode(otpCode)) {
 
-                        uRepo.updateIsVerifiedById(true, (long) u.getId());
-                        message = "Your account has been verified.";
-                        req_response.put("message", message);
-                        req_response.put("status", true);
-                        res = new ResponseEntity(req_response, HttpStatus.OK);
+                    uRepo.updateIsVerifiedById(true, (long) u.getId());
+                    message = "Your account has been verified.";
+                    req_response.put("message", message);
+                    req_response.put("status", true);
+                    res = new ResponseEntity(req_response, HttpStatus.OK);
 
                 } else {
                     message = "Please enter valid activation code.";
@@ -190,8 +279,8 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
-    public void getNotification(PushNotificationRequest request) {
-        pushNotificationService.sendPushNotificationToToken(request);
-        System.out.println("princr");
-    }
+//    public void getNotification(PushNotificationRequest request) {
+//        pushNotificationService.sendPushNotificationToToken(request);
+//        System.out.println("princr");
+//    }
 }

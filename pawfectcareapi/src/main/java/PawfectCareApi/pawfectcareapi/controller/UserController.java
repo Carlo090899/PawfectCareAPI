@@ -36,7 +36,25 @@ public class UserController {
     return userServiceImpl.signup(model.getFullname(), model.getPassword(), model.getGender(), model.getEmail(), model.getContactNumber(), model.getRole());
 
   }
-  
+
+  @PostMapping("hide_condition")
+  public ApiResponseModel hideCondition(@RequestParam("id") int id) {
+    return userServiceImpl.hideCondition(id);
+
+  }
+
+  @PostMapping("resend_code")
+  public ApiResponseModel resendCode(@RequestParam("email") String email) {
+    return userServiceImpl.resendCode(email);
+
+  }
+
+  @PostMapping("delete_registration")
+  public ApiResponseModel deleteRegistration(@RequestParam("email") String email) {
+    return userServiceImpl.deleteRegistration(email);
+
+  }
+
      @PostMapping("verify-email")
    public ResponseEntity verifyEmail(@RequestParam("email") String email, @RequestParam("otpCode") int otpCode) throws IOException {
       return userServiceImpl.verify(email, otpCode);

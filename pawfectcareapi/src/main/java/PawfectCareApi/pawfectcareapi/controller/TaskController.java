@@ -46,4 +46,9 @@ public class TaskController {
     return taskServiceImpl.deleteTask(task_id);
   }
 
+  @PostMapping("follow_up_task")
+  public ApiResponseModel followUpTask(@RequestParam("task_id") int task_id) {
+    return taskServiceImpl.followUpTask(task_id);
+  }
+
 }

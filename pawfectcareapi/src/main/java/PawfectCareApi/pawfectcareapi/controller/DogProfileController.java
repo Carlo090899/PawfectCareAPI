@@ -34,6 +34,15 @@ public class DogProfileController {
         return dogServiceImpl.saveDogDetails(file, dogName, gender, birthdate, notes);
     }
 
+    @PostMapping("edit_dog_details")
+    public ApiResponseModel editDogDetails(@RequestParam("dog_name") String dogName,
+                                           @RequestParam("dog_id") int dog_id,
+                                           @RequestParam("birthdate") String birthdate,
+                                           @RequestParam("notes") String notes) {
+        return dogServiceImpl.editDogDetails(dogName,dog_id, birthdate, notes);
+    }
+
+
     @GetMapping("get_dog_list")
     public ApiResponseModel getDogList() {
         return dogServiceImpl.getDogDetails();
@@ -76,6 +85,16 @@ public class DogProfileController {
     public ApiResponseModel saveAlbum(@RequestParam("dog_id") int dog_id ,@RequestParam("album_name") String album_name,
                                       @RequestParam("user_id") int user_id){
         return dogServiceImpl.saveAlbum(dog_id, album_name,user_id);
+    }
+
+    @PostMapping("edit_album")
+    public ApiResponseModel editAlbum(@RequestParam("album_id") int album_id ,@RequestParam("album_name") String album_name){
+        return dogServiceImpl.editAlbum(album_id, album_name);
+    }
+
+    @PostMapping("delete_album")
+    public ApiResponseModel deleteAlbum(@RequestParam("album_id") int album_id){
+        return dogServiceImpl.deleteAlbum(album_id);
     }
 
     @GetMapping("get_album")

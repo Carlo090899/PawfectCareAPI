@@ -132,6 +132,35 @@ public class DogServiceImpl implements DogService {
         return resp;
     }
 
+    @Override
+    public ApiResponseModel editDogDetails(String dogName, int dog_id, String birthdate, String notes) {
+        ApiResponseModel resp = new ApiResponseModel();
+        DogProfileEntity dogProfileEntity = new DogProfileEntity();
+
+        try {
+            dogProfileEntity = dogRepo.findById(dog_id);
+
+            dogProfileEntity.setDogName(dogName);
+            dogProfileEntity.setBirthdate(birthdate);
+            dogProfileEntity.setNotes(notes);
+
+            dogRepo.save(dogProfileEntity);
+
+            resp.setMessage("Dog Successfully Edited");
+            resp.setStatus(true);
+            resp.setStatusCode(200);
+
+        } catch (Exception e) {  // Change from ErrorException to Exception
+            e.printStackTrace();
+            resp.setMessage("Error occurred: " + e.getMessage());
+            resp.setStatus(false);
+            resp.setStatusCode(500);
+        }
+
+
+        return resp;
+    }
+
     private void saveImage(MultipartFile file) {
 
         try {
@@ -141,6 +170,32 @@ public class DogServiceImpl implements DogService {
         } catch (IOException ex) {
             Logger.getLogger(DogServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public ApiResponseModel editAlbum(int album_id, String album_name) {
+        ApiResponseModel resp = new ApiResponseModel();
+        DogAlbumEntity albumEntity = new DogAlbumEntity();
+        try {
+
+            albumEntity = albumRepo.findById(album_id);
+
+            albumEntity.setAlbumName(album_name);
+            albumRepo.save(albumEntity);
+
+            resp.setMessage("Album Successfully Edited");
+            resp.setStatus(true);
+            resp.setStatusCode(200);
+
+        } catch (Exception e) {  // Change from ErrorException to Exception
+            e.printStackTrace();
+            resp.setMessage("Error occurred: " + e.getMessage());
+            resp.setStatus(false);
+            resp.setStatusCode(500);
+        }
+
+
+        return resp;
     }
 
     @Override
@@ -220,6 +275,32 @@ public class DogServiceImpl implements DogService {
             saveImage(file);
 
             resp.setMessage("Image Successfully Saved");
+            resp.setStatus(true);
+            resp.setStatusCode(200);
+
+        } catch (Exception e) {  // Change from ErrorException to Exception
+            e.printStackTrace();
+            resp.setMessage("Error occurred: " + e.getMessage());
+            resp.setStatus(false);
+            resp.setStatusCode(500);
+        }
+
+
+        return resp;
+    }
+
+    @Override
+    public ApiResponseModel deleteAlbum(int album_id) {
+        ApiResponseModel resp = new ApiResponseModel();
+        DogAlbumEntity albumEntity = new DogAlbumEntity();
+        LocalDateTime date = LocalDateTime.now();
+        try {
+
+            albumEntity = albumRepo.findById(album_id);
+
+            albumRepo.delete(albumEntity);
+
+            resp.setMessage("Album Successfully Deleted");
             resp.setStatus(true);
             resp.setStatusCode(200);
 

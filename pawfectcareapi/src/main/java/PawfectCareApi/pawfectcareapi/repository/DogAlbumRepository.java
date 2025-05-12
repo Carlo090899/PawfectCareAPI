@@ -9,4 +9,6 @@ public interface DogAlbumRepository extends JpaRepository<DogAlbumEntity, Intege
 
     List<DogAlbumEntity> findByDogId(int dog_id);
 
+    DogAlbumEntity findById(int id);
+
 }

@@ -11,14 +11,13 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- *
  * @author ASCENT SOLUTIONS INC
  */
-  @Data
-  @Entity
-  @Table(name = "task_assignment")
-  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-  public class TaskAssignmentEntity {
+@Data
+@Entity
+@Table(name = "task_assignment")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class TaskAssignmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
@@ -46,5 +45,7 @@ import java.sql.Timestamp;
     @Column(name = "created_at")
     Timestamp createdAt;
 
+    @Column(name = "follow_up")
+    boolean followUp;
 
 }

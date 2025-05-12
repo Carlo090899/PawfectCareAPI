@@ -17,4 +17,7 @@ public interface UserService {
     ApiResponseModel userLogin (String username, String password, String token);
     ApiResponseModel signup(String fullname, String password, String gender, String email, String contactNumber, String role);
     ResponseEntity verify(String email, int otpCode);
+    ApiResponseModel hideCondition(int user_id);
+    ApiResponseModel resendCode(String email);
+    ApiResponseModel deleteRegistration(String email);
 }

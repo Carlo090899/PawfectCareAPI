@@ -16,8 +16,8 @@ import java.util.List;
  */
 public interface TaskAssignmentRepository extends JpaRepository<TaskAssignmentEntity, Integer>{
   
-  List<TaskAssignmentEntity> findByStatusIn(List<String> status);
-  List<TaskAssignmentEntity> findByAssignedToAndStatus(String assigned_to, String status);
+  List<TaskAssignmentEntity> findByStatusInOrderByFollowUpDesc(List<String> status);
+  List<TaskAssignmentEntity> findByAssignedToInAndStatus(List<String> assigned_to, String status);
   TaskAssignmentEntity findById(int id);
 
 }

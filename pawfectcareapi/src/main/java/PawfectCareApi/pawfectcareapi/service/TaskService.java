@@ -17,4 +17,5 @@ public interface TaskService {
   ApiResponseModel getEmployeeList();
   ApiResponseModel deleteTask(int task_id);
   ApiResponseModel updateTaskStatus(int task_id, String status);
+  ApiResponseModel followUpTask(int task_id);
 }

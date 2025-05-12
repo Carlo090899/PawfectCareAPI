@@ -44,13 +44,16 @@ public class UserEntity {
   @Column(name = "is_verified")
   boolean isVerified;
 
+  @Column(name = "is_read_tc")
+  boolean isReadTc;
+
   @Column(name = "otp_code")
   private int otpCode;
 
   @Column(name = "code_expired")
   private Timestamp codeExpired;
 
-  @Column(name = "device_token")
-  String deviceToken;
+  @Column(name = "notification_token")
+  String notificationToken;
 
 }

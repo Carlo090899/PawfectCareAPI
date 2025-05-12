@@ -37,4 +37,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
   @Transactional
   @Query("update UserEntity u set u.isVerified = ?1 where u.id = ?2")
   int updateIsVerifiedById(boolean isVerified, Long id);
+
+  @Query(
+          value = "SELECT notification_token FROM users WHERE role_id = 2 AND NOT notification_token IS NULL AND fullname = :fullname",
+          nativeQuery = true)
+  List<String> getNotificationTokenForTaskAssign(@Param("fullname") String fullname);
+
+  @Query(
+          value = "SELECT notification_token FROM users WHERE role_id = 1 AND NOT notification_token IS NULL AND fullname = :fullname",
+          nativeQuery = true)
+  List<String> getNotificationTokenForTaskComplete(@Param("fullname") String fullname);
+
 }
