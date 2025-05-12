@@ -40,9 +40,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository uRepo;
 
-//    @Autowired
-//    PushNotificationService pushNotificationService;
-
     BaseController baseController = new BaseController();
     public final String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz0123456789";
 
@@ -279,8 +276,4 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
-//    public void getNotification(PushNotificationRequest request) {
-//        pushNotificationService.sendPushNotificationToToken(request);
-//        System.out.println("princr");
-//    }
 }
